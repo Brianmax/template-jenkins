@@ -1,0 +1,21 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: jenkins
+    restart: unless-stopped
+    # root is required to read the Docker socket mounted below
+    user: root
+    ports:
+      - "8090:8080"    # Jenkins UI — 8090 avoids conflict with the Todos API on 8080
+      - "50000:50000"  # Jenkins agent inbound port (distributed builds)
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      # Mount the host Docker socket so Jenkins can run Docker commands (used by
+      # the optional Docker Build stage and the Docker Pipeline plugin)
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
+
+volumes:
+  jenkins_home:
+    name: jenkins_home
