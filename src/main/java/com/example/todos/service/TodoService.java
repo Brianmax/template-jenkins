@@ -26,7 +26,6 @@ public class TodoService {
     }
 
     public List<TodoResponse> findAll() {
-        System.out.println("kaldjflkajdkflajdk");
         log.info("operation=todo.listAll");
         return todoRepository.findAll().stream()
                 .map(this::toResponse)
