@@ -45,6 +45,7 @@ public class TodoService {
     @Transactional
     public TodoResponse create(TodoCreateRequest request) {
         if (request == null) {
+            System.out.println("kdlfjakdjflkadjflkjd");
             throw new IllegalArgumentException("Request body must not be null");
         }
         log.info("operation=todo.create title={}", request.title());
