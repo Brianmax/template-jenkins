@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Presentación en español sobre Jenkins, integración continua e integración con GitHub.">
+  <title>Jenkins + GitHub | Integración continua</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#slide-1">Ir a la presentación</a>
+
+  <main class="deck" id="deck" aria-label="Presentación Jenkins y GitHub">
+    <div class="slide-stage" id="slide-stage">
+      <section class="slide slide--hero is-active" id="slide-1" data-title="Jenkins + GitHub" aria-labelledby="title-1">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-orbit hero-orbit--one" aria-hidden="true"></div>
+        <div class="hero-orbit hero-orbit--two" aria-hidden="true"></div>
+        <div class="slide-content hero-content">
+          <p class="eyebrow">Integración continua, paso a paso</p>
+          <h1 id="title-1">Jenkins <span>+</span> GitHub</h1>
+          <p class="hero-subtitle">Cada cambio se convierte en una señal clara:<br>¿está listo para integrarse?</p>
+          <div class="hero-pipeline" aria-label="Flujo: código, pruebas y confianza">
+            <span>Código</span><i aria-hidden="true"></i><span>Pruebas</span><i aria-hidden="true"></i><strong>Confianza</strong>
+          </div>
+        </div>
+        <p class="corner-label">template-jenkins · Java 17 · Maven</p>
+      </section>
+
+      <section class="slide slide--light" id="slide-2" data-title="El problema" aria-labelledby="title-2">
+        <div class="slide-content split-story">
+          <div class="story-copy">
+            <p class="eyebrow eyebrow--dark">Antes de automatizar</p>
+            <h2 id="title-2">El código cambia más rápido que nuestra capacidad de revisarlo</h2>
+            <p class="lead">Cuando compilar y probar depende de una persona, el resultado también depende del momento.</p>
+          </div>
+          <div class="manual-loop" aria-label="Problemas del proceso manual">
+            <div class="manual-step manual-step--one"><b>01</b><span>“En mi máquina funciona”</span></div>
+            <div class="manual-step manual-step--two"><b>02</b><span>Pruebas olvidadas</span></div>
+            <div class="manual-step manual-step--three"><b>03</b><span>Errores después del merge</span></div>
+            <div class="manual-knot" aria-hidden="true">×</div>
+          </div>
+        </div>
+        <p class="takeaway">La automatización no reemplaza la revisión: le entrega evidencia.</p>
+      </section>
+
+      <section class="slide slide--ink" id="slide-3" data-title="Qué es Jenkins" aria-labelledby="title-3">
+        <div class="slide-content definition-layout">
+          <div class="definition-word" aria-hidden="true">J</div>
+          <div class="definition-copy">
+            <p class="eyebrow">Una definición útil</p>
+            <h2 id="title-3">Jenkins es un servidor de automatización</h2>
+            <p class="definition-text">Observa eventos, ejecuta un proceso reproducible y comunica el resultado al equipo.</p>
+            <div class="definition-rule"></div>
+            <p class="definition-note">Es open source, extensible mediante plugins y describe el proceso como código en un <code>Jenkinsfile</code>.</p>
+          </div>
+        </div>
+        <a class="source-link" href="https://www.jenkins.io/doc/" target="_blank" rel="noreferrer">Fuente: documentación oficial de Jenkins ↗</a>
+      </section>
+
+      <section class="slide slide--warm" id="slide-4" data-title="Para qué se usa" aria-labelledby="title-4">
+        <div class="slide-content">
+          <p class="eyebrow eyebrow--dark">El trabajo que delegamos</p>
+          <h2 id="title-4">Jenkins convierte una lista de tareas en un control de calidad repetible</h2>
+          <div class="conveyor" aria-label="Usos principales de Jenkins">
+            <article class="conveyor-item">
+              <span class="conveyor-index">01</span>
+              <h3>Compilar</h3>
+              <p>Transforma el código en un artefacto ejecutable.</p>
+            </article>
+            <div class="conveyor-arrow" aria-hidden="true">→</div>
+            <article class="conveyor-item">
+              <span class="conveyor-index">02</span>
+              <h3>Probar</h3>
+              <p>Ejecuta pruebas en un entorno consistente.</p>
+            </article>
+            <div class="conveyor-arrow" aria-hidden="true">→</div>
+            <article class="conveyor-item">
+              <span class="conveyor-index">03</span>
+              <h3>Empaquetar</h3>
+              <p>Genera JAR, imagen Docker u otro entregable.</p>
+            </article>
+            <div class="conveyor-arrow" aria-hidden="true">→</div>
+            <article class="conveyor-item conveyor-item--accent">
+              <span class="conveyor-index">04</span>
+              <h3>Informar</h3>
+              <p>Devuelve éxito o fallo al repositorio.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--light" id="slide-5" data-title="Pipeline como código" aria-labelledby="title-5">
+        <div class="slide-content pipeline-layout">
+          <div class="pipeline-copy">
+            <p class="eyebrow eyebrow--dark">Pipeline como código</p>
+            <h2 id="title-5">El Jenkinsfile hace visible el proceso</h2>
+            <p class="lead">La automatización vive junto al código, se revisa en Git y evoluciona con la aplicación.</p>
+          </div>
+          <div class="stage-track" aria-label="Etapas del pipeline del proyecto">
+            <div class="stage-line" aria-hidden="true"></div>
+            <article class="stage-node"><b>1</b><div><h3>Checkout</h3><p>Obtiene el commit correcto</p></div></article>
+            <article class="stage-node"><b>2</b><div><h3>Build</h3><p>Compila con Maven</p></div></article>
+            <article class="stage-node"><b>3</b><div><h3>Test</h3><p>Ejecuta JUnit</p></div></article>
+            <article class="stage-node"><b>4</b><div><h3>Package</h3><p>Crea el JAR</p></div></article>
+            <article class="stage-node"><b>5</b><div><h3>Archive</h3><p>Conserva el artefacto</p></div></article>
+          </div>
+        </div>
+        <a class="source-link source-link--dark" href="https://www.jenkins.io/doc/book/pipeline/jenkinsfile/" target="_blank" rel="noreferrer">Fuente: Jenkins Pipeline ↗</a>
+      </section>
+
+      <section class="slide slide--project" id="slide-6" data-title="Nuestro proyecto" aria-labelledby="title-6">
+        <div class="slide-content project-layout">
+          <div class="project-title">
+            <p class="eyebrow">Aplicado al repositorio</p>
+            <h2 id="title-6">En <code>template-jenkins</code>, cada push produce evidencia concreta</h2>
+          </div>
+          <div class="repo-tree" aria-label="Archivos principales del proyecto">
+            <p><span>◆</span> Jenkinsfile <small>orquesta el pipeline</small></p>
+            <p><span>├</span> pom.xml <small>define Java 17 y dependencias</small></p>
+            <p><span>├</span> mvnw <small>fija la versión de Maven</small></p>
+            <p><span>├</span> src/main <small>API Spring Boot</small></p>
+            <p><span>└</span> src/test <small>14 pruebas unitarias</small></p>
+          </div>
+          <div class="artifact-callout">
+            <span>Resultado</span>
+            <strong>todos-api-0.0.1-SNAPSHOT.jar</strong>
+            <p>Artefacto trazable hasta un commit.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram" id="slide-7" data-title="Integración con GitHub" aria-labelledby="title-7">
+        <div class="slide-content">
+          <p class="eyebrow">La integración completa</p>
+          <h2 id="title-7">GitHub inicia el flujo; Jenkins ejecuta y responde</h2>
+          <div class="integration-flow" aria-label="Flujo de integración entre GitHub y Jenkins">
+            <article class="flow-node flow-node--github">
+              <span class="node-mark">GH</span>
+              <div><h3>GitHub</h3><p>Recibe el push</p></div>
+            </article>
+            <div class="flow-connector"><b>1</b><span>Webhook</span><i aria-hidden="true">→</i></div>
+            <article class="flow-node flow-node--jenkins">
+              <span class="node-mark">J</span>
+              <div><h3>Jenkins</h3><p>Lee el Jenkinsfile</p></div>
+            </article>
+            <div class="flow-connector"><b>2</b><span>Pipeline</span><i aria-hidden="true">→</i></div>
+            <article class="flow-node flow-node--runner">
+              <span class="node-mark">CI</span>
+              <div><h3>Agente</h3><p>Compila y prueba</p></div>
+            </article>
+            <div class="status-return" aria-hidden="true"></div>
+            <p class="status-label">3 · Commit status: <strong>Jenkins CI</strong></p>
+          </div>
+        </div>
+        <a class="source-link" href="https://plugins.jenkins.io/github/" target="_blank" rel="noreferrer">Fuente: plugin GitHub para Jenkins ↗</a>
+      </section>
+
+      <section class="slide slide--light" id="slide-8" data-title="Cómo lo conectamos" aria-labelledby="title-8">
+        <div class="slide-content integration-steps-layout">
+          <div class="steps-heading">
+            <p class="eyebrow eyebrow--dark">Implementación</p>
+            <h2 id="title-8">Cinco piezas conectan el repositorio con Jenkins</h2>
+          </div>
+          <ol class="integration-steps">
+            <li><b>01</b><div><h3>Jenkins en Docker</h3><p>Controlador local en el puerto 8090.</p></div></li>
+            <li><b>02</b><div><h3>Plugins</h3><p>Pipeline, GitHub, Branch Source y JUnit.</p></div></li>
+            <li><b>03</b><div><h3>Multibranch Pipeline</h3><p>Descubre ramas que contienen un Jenkinsfile.</p></div></li>
+            <li><b>04</b><div><h3>Webhook</h3><p>GitHub notifica cada push a <code>/github-webhook/</code>.</p></div></li>
+            <li><b>05</b><div><h3>Token restringido</h3><p>Jenkins publica el estado del commit.</p></div></li>
+          </ol>
+        </div>
+        <p class="takeaway takeaway--compact">El secreto no vive en Git: se guarda en Jenkins Credentials.</p>
+      </section>
+
+      <section class="slide slide--code" id="slide-9" data-title="Anatomía del Jenkinsfile" aria-labelledby="title-9">
+        <div class="slide-content code-layout">
+          <div class="code-copy">
+            <p class="eyebrow">Una parte clave</p>
+            <h2 id="title-9">Cada etapa tiene una responsabilidad observable</h2>
+            <p class="lead lead--light">Si una etapa falla, las siguientes no producen un artefacto engañoso.</p>
+            <div class="code-annotation"><span>→</span><p><strong>JUnit</strong> conserva el reporte aunque las pruebas fallen.</p></div>
+          </div>
+          <pre class="code-window" aria-label="Ejemplo de Jenkinsfile"><code><span class="c-muted">stage</span>(<span class="c-string">'Test'</span>) {
+  steps {
+    sh <span class="c-string">'./mvnw test -B'</span>
+  }
+  post {
+    always {
+      junit <span class="c-string">'target/surefire-reports/*.xml'</span>
+    }
+  }
+}
+
+<span class="c-muted">stage</span>(<span class="c-string">'Package'</span>) {
+  steps {
+    sh <span class="c-string">'./mvnw package -DskipTests -B'</span>
+  }
+}</code></pre>
+        </div>
+      </section>
+
+      <section class="slide slide--outcomes" id="slide-10" data-title="El resultado en GitHub" aria-labelledby="title-10">
+        <div class="slide-content outcomes-layout">
+          <p class="eyebrow eyebrow--dark">La señal que ve el equipo</p>
+          <h2 id="title-10">El mismo pipeline produce dos decisiones diferentes</h2>
+          <div class="outcome-lanes">
+            <article class="outcome outcome--pass">
+              <div class="outcome-symbol" aria-hidden="true">✓</div>
+              <div><p class="outcome-label">Jenkins CI · success</p><h3>El cambio puede avanzar</h3><span>Compila · pruebas pasan · artefacto creado</span></div>
+            </article>
+            <article class="outcome outcome--fail">
+              <div class="outcome-symbol" aria-hidden="true">×</div>
+              <div><p class="outcome-label">Jenkins CI · failure</p><h3>El cambio vuelve al autor</h3><span>GitHub bloquea el merge si el estado es obligatorio</span></div>
+            </article>
+          </div>
+        </div>
+        <a class="source-link source-link--dark" href="https://docs.github.com/en/rest/commits/statuses" target="_blank" rel="noreferrer">Fuente: GitHub Commit Status API ↗</a>
+      </section>
+
+      <section class="slide slide--safety" id="slide-11" data-title="Seguridad y operación" aria-labelledby="title-11">
+        <div class="slide-content safety-layout">
+          <div class="safety-copy">
+            <p class="eyebrow">Automatizar también exige límites</p>
+            <h2 id="title-11">Un pipeline confiable protege tanto el código como sus credenciales</h2>
+          </div>
+          <div class="safety-list">
+            <article><b>01</b><h3>Token mínimo</h3><p>Solo el repositorio y permisos necesarios.</p></article>
+            <article><b>02</b><h3>Secretos fuera de Git</h3><p>Credentials Binding evita copiarlos al código.</p></article>
+            <article><b>03</b><h3>Webhook verificable</h3><p>TLS, secreto y acceso restringido.</p></article>
+            <article><b>04</b><h3>Agentes separados</h3><p>En producción, no ejecutar builds en el controlador.</p></article>
+          </div>
+        </div>
+        <p class="security-warning">Montar <code>/var/run/docker.sock</code> entrega control amplio sobre el host. Debe ser una decisión explícita.</p>
+      </section>
+
+      <section class="slide slide--final" id="slide-12" data-title="Idea final" aria-labelledby="title-12">
+        <div class="final-rings" aria-hidden="true"></div>
+        <div class="slide-content final-layout">
+          <p class="eyebrow">La idea que importa</p>
+          <h2 id="title-12">Jenkins convierte cada cambio en una respuesta verificable</h2>
+          <div class="final-equation" aria-label="Push más pipeline más estado igual a confianza">
+            <span>Push</span><b>+</b><span>Pipeline</span><b>+</b><span>Estado</span><b>=</b><strong>Confianza</strong>
+          </div>
+          <p class="final-next">Siguiente paso: ejecutar el flujo completo con una rama y un test que falle a propósito.</p>
+          <div class="resources">
+            <a href="../../JENKINS_IMPLEMENTATION_GUIDE.md">Guía de implementación</a>
+            <a href="https://www.jenkins.io/doc/book/pipeline/multibranch/" target="_blank" rel="noreferrer">Jenkins Multibranch</a>
+            <a href="https://docs.github.com/en/webhooks" target="_blank" rel="noreferrer">GitHub Webhooks</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <nav class="deck-controls" aria-label="Controles de la presentación">
+      <button class="control-button" id="prev-slide" type="button" aria-label="Diapositiva anterior">←</button>
+      <button class="control-button" id="overview-button" type="button" aria-label="Mostrar resumen" aria-pressed="false">⌗</button>
+      <p class="slide-counter" aria-live="polite"><span id="current-slide">01</span><i></i><span id="total-slides">12</span></p>
+      <button class="control-button" id="fullscreen-button" type="button" aria-label="Pantalla completa">⛶</button>
+      <button class="control-button" id="next-slide" type="button" aria-label="Diapositiva siguiente">→</button>
+    </nav>
+
+    <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progress-bar"></div></div>
+
+    <div class="overview" id="overview" aria-hidden="true" aria-label="Resumen de diapositivas">
+      <div class="overview-header">
+        <div><p class="eyebrow">Vista general</p><h2>Selecciona una diapositiva</h2></div>
+        <button id="close-overview" type="button" aria-label="Cerrar resumen">×</button>
+      </div>
+      <div class="overview-grid" id="overview-grid"></div>
+    </div>
+
+    <div class="keyboard-help" id="keyboard-help" role="dialog" aria-modal="true" aria-labelledby="help-title" aria-hidden="true">
+      <div class="help-panel">
+        <button id="close-help" type="button" aria-label="Cerrar ayuda">×</button>
+        <p class="eyebrow">Controles</p>
+        <h2 id="help-title">Navegación por teclado</h2>
+        <dl>
+          <div><dt>← / →</dt><dd>Anterior / siguiente</dd></div>
+          <div><dt>Espacio</dt><dd>Siguiente diapositiva</dd></div>
+          <div><dt>Inicio / Fin</dt><dd>Primera / última</dd></div>
+          <div><dt>O / Esc</dt><dd>Abrir / cerrar resumen</dd></div>
+          <div><dt>F</dt><dd>Pantalla completa</dd></div>
+          <div><dt>?</dt><dd>Mostrar esta ayuda</dd></div>
+        </dl>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
