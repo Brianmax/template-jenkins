@@ -6,9 +6,9 @@ pipeline {
         jdk 'JDK-17'
     }
 
-    triggers {
-        githubPush()
-    }
+//     triggers {
+//         githubPush()
+//     }
 
     environment {
         APP_NAME    = 'todos-api'
