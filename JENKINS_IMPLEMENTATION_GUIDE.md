@@ -143,7 +143,7 @@ Then go to **Manage Jenkins -> Tools -> JDK installations -> Add JDK** and confi
 
 Save the configuration.
 
-The name is case-sensitive and must match `jdk 'JDK-17'` in the repository's `Jenkinsfile`.
+The name is case-sensitive and must match `jdk 'JDK-17'` in the repository's `Jenkinsfile`. Do not enable automatic installation: the controller image already provides Java 17, and downloading another JDK can leave the pipeline waiting in **Declarative: Tool Install**.
 
 ## 6. Create GitHub credentials for scanning and commit statuses
 
@@ -169,7 +169,7 @@ Store the token in Jenkins:
 6. Set **Description** to `GitHub commit status token`.
 7. Select **Create**.
 
-Store the same token a second time in the credential form required by GitHub Branch Source:
+Store the same token a second time in the credential form required by GitHub Branch Source. This does not require generating another PAT:
 
 1. Select **Add Credentials** again.
 2. Set **Kind** to **Username with password**.
@@ -183,7 +183,7 @@ Authenticated scanning avoids GitHub's anonymous API limit of 60 requests per ho
 
 Do not put the token in the repository, a shell script, the Compose file, or the Jenkinsfile.
 
-> A classic personal access token with the narrow `repo:status` scope can also be used. Prefer a fine-grained token restricted to this repository.
+> An existing classic personal access token with the `repo` scope can also be reused, but it grants broader access. Prefer a fine-grained token restricted to this repository.
 
 ## 7. Create the multibranch pipeline
 
@@ -205,7 +205,14 @@ Under **Branch Sources**:
 
 3. Validate the URL.
 4. Set **Credentials** to `github-scan`. Although anonymous scanning works for a public repository, its 60-request-per-hour API limit can make Jenkins delay branch indexing for several minutes.
-5. Under **Behaviors**, enable branch discovery. Enable pull-request discovery if pull requests, including fork pull requests, must have their own Jenkins jobs.
+5. Under **Behaviors**, configure:
+
+   | Behavior | Strategy |
+   |---|---|
+   | Discover branches | **Exclude branches that are also filed as PRs** |
+   | Discover pull requests from origin | **The current pull request revision** |
+
+   This prevents Jenkins from building the same commit once as a branch and again as a pull request. Do not enable **Discover pull requests from forks** unless builds from external contributors are explicitly required. Fork builds execute contributor-controlled code; this is especially dangerous while Jenkins runs as root with the host Docker socket mounted.
 
 Under **Build Configuration**, keep:
 
@@ -258,7 +265,7 @@ In GitHub, open **Brianmax/template-jenkins -> Settings -> Webhooks -> Add webho
 |---|---|
 | Payload URL | `https://example-subdomain.ngrok-free.app/github-webhook/` |
 | Content type | `application/json` |
-| Secret | A new random webhook secret, if the installed Jenkins plugin configuration supports it |
+| Secret | Leave blank for this guide; if signature validation is configured later, the value must match in Jenkins |
 | SSL verification | Enabled |
 | Events | Just the push event |
 | Active | Enabled |
@@ -403,6 +410,16 @@ Symptoms include `Tool type "jdk" does not have an install of "JDK-17" configure
 3. Confirm that the JDK name is exactly `JDK-17`.
 4. Confirm that JAVA_HOME matches the path inside the container.
 
+### The build waits at `Declarative: Tool Install`
+
+The JDK entry was probably configured with **Install automatically** enabled.
+
+1. Stop the waiting build.
+2. Open **Manage Jenkins -> Tools -> JDK installations**.
+3. Edit `JDK-17` and uncheck **Install automatically**.
+4. Set **JAVA_HOME** to `/opt/java/openjdk`.
+5. Save and select **Build Now** on the branch job. A repository rescan is not required.
+
 ### Jenkins cannot find `github-token`
 
 Create a global **Secret text** credential with ID exactly `github-token`. Credential names and IDs are case-sensitive.
@@ -436,6 +453,16 @@ The current `Jenkinsfile` derives `owner/repository` from an HTTPS GitHub URL. A
 5. Check the GitHub webhook's **Recent Deliveries** payload and response.
 6. Check **Manage Jenkins -> System Log** for GitHub hook messages.
 
+### GitHub reports HTTP 403 for the webhook
+
+Confirm that the payload URL contains the Jenkins endpoint and trailing slash:
+
+```text
+https://your-ngrok-host.ngrok-free.app/github-webhook/
+```
+
+Posting to the ngrok root path `/` reaches Jenkins but is rejected with `403 No valid crumb`. Do not disable Jenkins CSRF protection. Correct the URL, save it, and use **Recent Deliveries -> Redeliver** in GitHub. The corrected endpoint should return HTTP 200.
+
 ### A new branch is not visible
 
 Run **Scan Multibranch Pipeline Now** and verify that branch discovery is enabled under the GitHub branch-source behaviors. Keep periodic scanning enabled as a fallback.
@@ -465,6 +492,17 @@ ports:
 
 Restart the Compose project and update both the browser URL and ngrok command.
 
+### Docker reports `no match for platform in manifest`
+
+The Alpine Temurin 17 JRE image does not provide every platform manifest, including the ARM64 platform used by Apple Silicon. The repository's `Dockerfile` uses the multi-architecture Ubuntu Jammy variants for both stages:
+
+```dockerfile
+FROM eclipse-temurin:17-jdk-jammy AS build
+FROM eclipse-temurin:17-jre-jammy
+```
+
+Build the application image with `docker build -t todos-api:local .`.
+
 ## 16. Production hardening checklist
 
 Before using Jenkins beyond a local exercise:
@@ -489,6 +527,7 @@ Before using Jenkins beyond a local exercise:
 - [ ] The `github-token` Secret Text credential exists.
 - [ ] The `github-scan` Username with password credential is selected for the GitHub branch source.
 - [ ] The multibranch source uses `https://github.com/Brianmax/template-jenkins.git`.
+- [ ] Branch discovery excludes branches also filed as PRs, and origin PR discovery builds the current revision.
 - [ ] `main` builds successfully and archives the JAR.
 - [ ] The webhook returns HTTP 200 for a push.
 - [ ] A pushed feature branch builds automatically.
